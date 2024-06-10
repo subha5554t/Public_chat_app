@@ -76,6 +76,20 @@
         width: 30%;
       }
 
+      #online-users {
+  position: fixed;
+  top: 80px;
+  right: 10px;
+  z-index: 1001;
+  background-color: #333; /* dark gray background */
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #fff; /* white text color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+
       
       #message-form {
         background: #fff;
@@ -161,6 +175,9 @@
       <input type="text" placeholder="Enter room id" id="room-id" name="room-id" />
       <button type="submit">Join Room</button>
     </form>
+
+    <div id="online-users">🙋🏻‍♂️: <span id="online-count">0</span></div>
+
     <ul id="messages"></ul>
     <form id="message-form">
       <input
@@ -206,6 +223,13 @@
         return false;
       });
 
+       //user count
+    socket.on("update count", function(count) {
+    document.getElementById("online-count").innerHTML = count;
+  });
+
+
+  //join
       socket.on("join room", function (name, roomId) {
         $("#messages").append(
           '<li class="joining"><div class="message">' +
