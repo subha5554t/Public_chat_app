@@ -28,11 +28,10 @@ app.get("/", async(req,res)=>{
     return res.render('home');
 });
 
-let onlineUsers = 1;
+let onlineUsers = 0;
 
 
 io.on('connection', (socket) => {
-   
   console.log('new user connected');
 
   socket.on('joining msg', (name) => {
@@ -45,10 +44,12 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
       const name = socket.name; 
-      console.log(name + ' user disconnected');
-      onlineUsers--;
-      io.emit("update user count", onlineUsers);
-      io.emit('user left', name);
+      if (name) {
+          console.log(name + ' user disconnected');
+          onlineUsers--;
+          io.emit("update user count", onlineUsers);
+          io.emit('user left', name);
+      }
   });
 
   socket.on('chat message', (msg) => {
