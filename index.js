@@ -13,7 +13,7 @@ const io =socketio(server);
 
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/auth')
+mongoose.connect('mongodb+srv://catci142:catci142@cluster0.oyfmupl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/auth')
 .then(()=> console.log("MongoDb connected"));
 
 app.set("view engine", "ejs");
