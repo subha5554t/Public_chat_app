@@ -58,6 +58,18 @@
     #intro {
         border-radius: 0 0 20px 20px;
     }
+    #online-users {
+  position: fixed;
+  top: 80px;
+  right: 10px;
+  z-index: 1001;
+  background-color: #333; /* dark gray background */
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #fff; /* white text color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
 
 
     body {
@@ -188,6 +200,11 @@ $(function() {
         }
         return false;
     });
+
+    //user count
+    socket.on("update user count", function(count) {
+    document.getElementById("online-count").innerHTML = count;
+  });
 //join 
     socket.on("user joined", function(name) {
         $("#messages").append(
@@ -221,6 +238,8 @@ var notificationSound = document.getElementById("notificationSound");
 <div id="intro">
     <h1><center>ChatRoom</center></h1>
 </div>
+<div id="online-users">🙋🏻‍♂️: <span id="online-count">0</span></div>
+
 
 <ul id="messages"></ul>
 
