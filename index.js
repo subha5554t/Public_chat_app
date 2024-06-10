@@ -28,12 +28,17 @@ app.get("/", async(req,res)=>{
     return res.render('home');
 });
 
+let onlineUsers = 2;
+
 
 io.on('connection', (socket) => {
+   
   console.log('new user connected');
 
   socket.on('joining msg', (name) => {
       console.log(name + ' has joined the chat');
+      onlineUsers++;
+      io.emit("update user count", onlineUsers);
       socket.name = name; 
       io.emit('user joined', name);
   });
@@ -41,6 +46,8 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
       const name = socket.name; 
       console.log(name + ' user disconnected');
+      onlineUsers--;
+      io.emit("update user count", onlineUsers);
       io.emit('user left', name);
   });
 
@@ -48,20 +55,38 @@ io.on('connection', (socket) => {
       socket.broadcast.emit('chat message', msg);
   });
 
+
+  
   socket.on('join room', ({ roomId, name }) => {
     socket.join(roomId);
-    console.log(name + ' has joined the chat');
+    io.of('/').in(roomId).clients((error, clients) => {
+      if (error) throw error;
+      const onlineCount = clients.length;
+      console.log(onlineCount + " are in " + roomId);
+      io.to(roomId).emit("update count", onlineCount);
+    });
+  
+    console.log(name + 'as joined the chat');
     socket.uname = name;
+    socket.room = roomId;
     io.to(roomId).emit('join room', name); // Emitting to everyone in the room
-});
+  });
 
-socket.on('disconnect', () => {
+  socket.on('disconnect', () => {
     const name = socket.uname;
-    if(name!=null){
-        console.log(name + ' user disconnected');
-        io.emit('leave room', name);
-    } 
-});
+    const roomId = socket.room;
+    if (name != null) {
+      console.log(name + ' user disconnected');
+      io.emit('leave room', name);
+      io.of('/').in(roomId).clients((error, clients) => {
+        if (error) throw error;
+        const onlineCount = clients.length;
+        io.to(roomId).emit("update count", onlineCount);
+      });
+     
+    }
+  });
+
 
 socket.on('private message', ({ roomId, msg }) => {
     socket.broadcast.to(roomId).emit('private message', msg);
