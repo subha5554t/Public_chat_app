@@ -28,7 +28,7 @@ app.get("/", async(req,res)=>{
     return res.render('home');
 });
 
-let onlineUsers = 2;
+let onlineUsers = 1;
 
 
 io.on('connection', (socket) => {
