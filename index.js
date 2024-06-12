@@ -78,11 +78,11 @@ io.on('connection', (socket) => {
     const roomId = socket.room;
     if (name != null) {
       console.log(name + ' user disconnected');
-      io.emit('leave room', name);
+      socket.to(roomId).emit('leave room', name);
       io.of('/').in(roomId).clients((error, clients) => {
         if (error) throw error;
         const onlineCount = clients.length;
-        io.to(roomId).emit("update count", onlineCount);
+         socket.to(roomId).emit("update count", onlineCount);
       });
      
     }
