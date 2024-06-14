@@ -13,7 +13,7 @@ router.post("/signup", async(req,res)=>{
     const existingUser = await User.findOne({ email });
    
     if (existingUser) {
-      return res.redirect(`/user/login?userExists=true&email=${encodeURIComponent(email)}`);
+      return res.redirect(`/user/login?userExists=true&email=${(email)}`);
   }
     else{
       await User.create({
